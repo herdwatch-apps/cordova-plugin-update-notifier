@@ -1,6 +1,6 @@
 {
-  "name": "cordova-plugin-update-notifier",
-  "version": "3.0.0",
+  "name": "@herdwatch/cordova-plugin-update-notifier",
+  "version": "3.1.2-fix.1",
   "author": "Ayogo Health Inc. <info@ayogo.com>",
   "contributors": [
     "Darryl Pogue <darryl@dpogue.ca>",
@@ -8,9 +8,13 @@
   ],
   "description": "Cordova plugin for showing a notification for app updates.",
   "license": "Apache-2.0",
+  "homepage": "https://github.com/herdwatch-apps/cordova-plugin-update-notifier#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AyogoHealth/cordova-plugin-update-notifier.git"
+    "url": "git+https://github.com/herdwatch-apps/cordova-plugin-update-notifier.git"
+  },
+  "bugs": {
+    "url": "https://github.com/herdwatch-apps/cordova-plugin-update-notifier/issues"
   },
   "keywords": [
     "cordova",

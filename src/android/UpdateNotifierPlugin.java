@@ -22,8 +22,11 @@ import android.content.IntentSender;
 import com.google.android.material.snackbar.Snackbar;
 import android.view.View;
 
+import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.LOG;
+import org.apache.cordova.PluginResult;
+import org.json.JSONArray;
 
 import com.google.android.play.core.appupdate.AppUpdateInfo;
 import com.google.android.play.core.appupdate.AppUpdateManager;
@@ -46,6 +49,7 @@ public class UpdateNotifierPlugin extends CordovaPlugin {
     private final String TAG = "UpdateNotifierPlugin";
     private static final Integer RC_APP_UPDATE = 577;
 
+    private CallbackContext onUpdateReadyCallback = null;
 
     /**
      * Called after plugin construction and fields have been initialized.
@@ -55,6 +59,23 @@ public class UpdateNotifierPlugin extends CordovaPlugin {
         LOG.i(TAG, "Initializing");
     }
 
+    @Override
+    public boolean execute(String action, JSONArray args, CallbackContext callbackContext) {
+        if ("onUpdateReady".equals(action)) {
+            this.onUpdateReadyCallback = callbackContext;
+            PluginResult result = new PluginResult(PluginResult.Status.NO_RESULT);
+            result.setKeepCallback(true);
+            callbackContext.sendPluginResult(result);
+            return true;
+        } else if ("completeUpdate".equals(action)) {
+            if (mAppUpdateManager != null) {
+                mAppUpdateManager.completeUpdate();
+            }
+            callbackContext.success();
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Called when the activity is becoming visible to the user.
@@ -65,7 +86,7 @@ public class UpdateNotifierPlugin extends CordovaPlugin {
             @Override
             public void onStateUpdate(InstallState state) {
                 if (state.installStatus() == InstallStatus.DOWNLOADED){
-                    popupSnackbarForCompleteUpdate();
+                    popupForCompleteUpdate();
                 } else if (state.installStatus() == InstallStatus.INSTALLED) {
                     if (mAppUpdateManager != null){
                         mAppUpdateManager.unregisterListener(mInstallListener);
@@ -104,7 +125,7 @@ public class UpdateNotifierPlugin extends CordovaPlugin {
                         e.printStackTrace();
                     }
                 } else if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED) {
-                    popupSnackbarForCompleteUpdate();
+                    popupForCompleteUpdate();
                 } else {
                     LOG.e(TAG, "getAppUpdateInfo: Unhandled case");
                 }
@@ -140,10 +161,19 @@ public class UpdateNotifierPlugin extends CordovaPlugin {
         }
     }
 
-    private void popupSnackbarForCompleteUpdate() {
+    private void popupForCompleteUpdate() {
         cordova.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
+
+                if (onUpdateReadyCallback != null) {
+                    PluginResult result = new PluginResult(PluginResult.Status.OK, true);
+                    result.setKeepCallback(true);
+                    onUpdateReadyCallback.sendPluginResult(result);
+                    return;
+                }
+                LOG.w(TAG, "Update ready, but no JS callback was registered.");
+
                 Activity activity = cordova.getActivity();
 
                 int descID = activity.getResources().getIdentifier("app_update_ready", "string", activity.getPackageName());

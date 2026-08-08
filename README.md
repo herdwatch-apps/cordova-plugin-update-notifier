@@ -14,6 +14,16 @@
   limitations under the License.
 -->
 
+## Why this fork exists
+
+Forked from [upstream](https://github.com/AyogoHealth/cordova-plugin-update-notifier) to add a JS-side `onReady` callback (letting the app show its own update prompt instead of the built-in Android Snackbar) and to publish under the `@herdwatch` npm scope.
+
+Published as [`@herdwatch/cordova-plugin-update-notifier`](https://www.npmjs.com/package/@herdwatch/cordova-plugin-update-notifier).
+
+Changes from upstream:
+- Added `UpdateNotifier.onReady(callback)` / `UpdateNotifier.completeUpdate()` (see "Custom JS Popup Support" below) so the app can show its own UI instead of the default Snackbar.
+- Republished under the `@herdwatch/cordova-plugin-update-notifier` npm scope.
+
 cordova-plugin-update-notifier
 ==============================
 
@@ -28,6 +38,39 @@ For Android, this implements the [Play Store In-App Update][playlib] system.
 >
 > Use version 1.x if you are building without AndroidX enabled.
 
+
+## Custom JS Popup Support (Android)
+Starting from version `3.1.0`, this plugin allows you to **replace the default Snackbar update prompt**  
+with your own JavaScript popup logic.
+
+This is useful if you want to:
+- Use your app's existing UI components instead of Material Snackbar
+- Localize the update prompt dynamically
+- Show a modal dialog instead of a banner
+
+### How it works
+The plugin now exposes a `UpdateNotifier.onReady(callback)` function.  
+When the update is downloaded and ready to install, your callback is triggered from JavaScript.
+
+From your callback, you can:
+- Display a custom UI (e.g., alert, modal, toast)
+- Call `UpdateNotifier.completeUpdate()` to trigger installation
+
+---
+
+### Example Usage
+```javascript
+document.addEventListener('deviceready', function () {
+    UpdateNotifier.onReady(function () {
+        console.log("Update downloaded and ready!");
+
+        // Your custom popup
+        if (confirm("A new version is available. Install now?")) {
+            UpdateNotifier.completeUpdate();
+        }
+    });
+});
+```
 
 Installation
 ------------
@@ -83,6 +126,11 @@ You can set the value to "critical", "annoying", "persistent", "hinting" and "re
 <preference name="SirenAlertType" value="persistent" />
 <preference name="SirenAlertType" value="hinting" />
 <preference name="SirenAlertType" value="relaxed" />
+```
+
+Add swift support
+```xml
+<preference name="SwiftVersion" value="5.0" />
 ```
 
 For Android, you can force all updates to be considered "immediate" with the `AndroidUpdateAlertType` preference in config.xml.

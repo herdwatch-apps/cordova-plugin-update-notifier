@@ -14,7 +14,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="cordova-plugin-update-notifier" version="3.0.0">
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="@herdwatch/cordova-plugin-update-notifier" version="3.1.2-fix.1">
   <name>cordova-plugin-update-notifier</name>
   <description>Cordova plugin for showing a notification for app updates.</description>
   <keywords>cordova,ios,android</keywords>
@@ -27,20 +27,24 @@ limitations under the License.
     <engine name="cordova-android" version=">= 9.0.0" />
   </engines>
 
+  <js-module src="www/UpdateNotifier.js" name="UpdateNotifier">
+    <clobbers target="UpdateNotifier" />
+  </js-module>
+
   <platform name="ios">
     <config-file parent="/*" target="config.xml">
       <feature name="UpdateNotifier">
         <param name="ios-package" value="CDVUpdateNotifierPlugin" />
         <param name="onload" value="true" />
       </feature>
-
-      <preference name="SwiftVersion" value="5.0" />
     </config-file>
 
     <source-file src="src/ios/UpdateNotifierPlugin.swift" />
 
     <podspec>
-      <config></config>
+      <config>
+        <source url="https://cdn.cocoapods.org/"/>
+      </config>
       <pods use-frameworks="true">
         <pod name="Siren" />
       </pods>
