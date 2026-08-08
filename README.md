@@ -14,6 +14,16 @@
   limitations under the License.
 -->
 
+## Why this fork exists
+
+Forked from [upstream](https://github.com/AyogoHealth/cordova-plugin-update-notifier) to add a JS-side `onReady` callback (letting the app show its own update prompt instead of the built-in Android Snackbar) and to publish under the `@herdwatch` npm scope.
+
+Published as [`@herdwatch/cordova-plugin-update-notifier`](https://www.npmjs.com/package/@herdwatch/cordova-plugin-update-notifier).
+
+Changes from upstream:
+- Added `UpdateNotifier.onReady(callback)` / `UpdateNotifier.completeUpdate()` (see "Custom JS Popup Support" below) so the app can show its own UI instead of the default Snackbar.
+- Republished under the `@herdwatch/cordova-plugin-update-notifier` npm scope.
+
 cordova-plugin-update-notifier
 ==============================
 
